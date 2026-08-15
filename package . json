@@ -1,0 +1,8 @@
+{
+  "name": "social-media-generator",
+  "version": "1.0.0",
+  "description": "Professional AI Social Media Content Generator",
+  "scripts": {
+    "dev": "echo 'Open index.html in browser'"
+  }
+}
