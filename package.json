@@ -1,0 +1,9 @@
+{
+  "name": "social-media-generator",
+  "version": "1.0.0",
+  "description": "Professional AI Social Media Content Generator",
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "start": "python -m http.server 3000"
+  }
+}
