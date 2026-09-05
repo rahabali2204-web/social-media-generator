@@ -1,7 +1,7 @@
-```javascript
 const express = require("express");
 const cors = require("cors");
 const Anthropic = require("@anthropic-ai/sdk");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +9,9 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve frontend files
+app.use(express.static(__dirname));
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -35,41 +38,95 @@ Return ONLY valid JSON with this exact structure:
 
 {
   "postIdeas": [
-    {"id": 1, "idea": "...", "description": "..."},
-    {"id": 2, "idea": "...", "description": "..."},
-    {"id": 3, "idea": "...", "description": "..."}
+    {
+      "id": 1,
+      "idea": "...",
+      "description": "..."
+    },
+    {
+      "id": 2,
+      "idea": "...",
+      "description": "..."
+    },
+    {
+      "id": 3,
+      "idea": "...",
+      "description": "..."
+    }
   ],
   "captions": [
-    {"caption": "..."},
-    {"caption": "..."},
-    {"caption": "..."}
+    {
+      "caption": "..."
+    },
+    {
+      "caption": "..."
+    },
+    {
+      "caption": "..."
+    }
   ],
   "hashtags": [
-    "tag1", "tag2", "tag3", "tag4", "tag5",
-    "tag6", "tag7", "tag8", "tag9", "tag10"
+    "tag1",
+    "tag2",
+    "tag3",
+    "tag4",
+    "tag5",
+    "tag6",
+    "tag7",
+    "tag8",
+    "tag9",
+    "tag10"
   ],
   "contentTypes": [
-    {"type": "...", "description": "..."},
-    {"type": "...", "description": "..."},
-    {"type": "...", "description": "..."},
-    {"type": "...", "description": "..."}
+    {
+      "type": "...",
+      "description": "..."
+    },
+    {
+      "type": "...",
+      "description": "..."
+    },
+    {
+      "type": "...",
+      "description": "..."
+    },
+    {
+      "type": "...",
+      "description": "..."
+    }
   ],
   "contentPlan": {
     "week1": {
       "theme": "...",
-      "posts": ["...", "...", "..."]
+      "posts": [
+        "...",
+        "...",
+        "..."
+      ]
     },
     "week2": {
       "theme": "...",
-      "posts": ["...", "...", "..."]
+      "posts": [
+        "...",
+        "...",
+        "..."
+      ]
     },
     "week3": {
       "theme": "...",
-      "posts": ["...", "...", "..."]
+      "posts": [
+        "...",
+        "...",
+        "..."
+      ]
     },
     "week4": {
       "theme": "...",
-      "posts": ["...", "...", "..."]
+      "posts": [
+        "...",
+        "...",
+        "..."
+      ]
     }
   }
 }`;
@@ -96,16 +153,17 @@ Return ONLY valid JSON with this exact structure:
     const generatedContent = JSON.parse(jsonMatch[0]);
 
     res.json(generatedContent);
+
   } catch (error) {
     console.error("Error:", error);
 
     res.status(500).json({
-      error: "Failed to generate content. Please try again.",
+      error: "Failed to generate content. Please check your API key and try again.",
     });
   }
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-```
