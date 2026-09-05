@@ -1,9 +1,19 @@
+```json
 {
   "name": "social-media-generator",
   "version": "1.0.0",
   "description": "Professional AI Social Media Content Generator",
+  "main": "server.js",
   "scripts": {
-    "dev": "python -m http.server 3000",
-    "start": "python -m http.server 3000"
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.60.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0"
   }
 }
+```
+
