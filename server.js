@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const Anthropic = require("@anthropic-ai/sdk");
-const path = require("path");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 
 const app = express();
@@ -13,9 +12,8 @@ app.use(express.json());
 // Serve frontend files
 app.use(express.static(__dirname));
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/api/generate", async (req, res) => {
   try {
@@ -23,16 +21,21 @@ app.post("/api/generate", async (req, res) => {
 
     if (!topic || !topic.trim()) {
       return res.status(400).json({
-        error: "Please enter a topic or niche",
+        error: "Please enter a topic or product.",
       });
     }
 
-    const prompt = `You are an expert social media content strategist specializing in Instagram.
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+
+    const prompt = `
+You are an expert social media content strategist specializing in Instagram.
 
 Generate comprehensive social media content for:
 
 Topic/Product: ${topic}
-${niche ? `Niche/Industry: ${niche}` : ""}
+Niche/Industry: ${niche || "General"}
 
 Return ONLY valid JSON with this exact structure:
 
@@ -98,51 +101,26 @@ Return ONLY valid JSON with this exact structure:
   "contentPlan": {
     "week1": {
       "theme": "...",
-      "posts": [
-        "...",
-        "...",
-        "..."
-      ]
+      "posts": ["...", "...", "..."]
     },
     "week2": {
       "theme": "...",
-      "posts": [
-        "...",
-        "...",
-        "..."
-      ]
+      "posts": ["...", "...", "..."]
     },
     "week3": {
       "theme": "...",
-      "posts": [
-        "...",
-        "...",
-        "..."
-      ]
+      "posts": ["...", "...", "..."]
     },
     "week4": {
       "theme": "...",
-      "posts": [
-        "...",
-        "...",
-        "..."
-      ]
+      "posts": ["...", "...", "..."]
     }
   }
-}`;
+}
+`;
 
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 2000,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
-
-    const responseText = message.content[0].text;
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
 
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
 
@@ -163,7 +141,6 @@ Return ONLY valid JSON with this exact structure:
   }
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
